@@ -6,6 +6,10 @@ services:
     container_name: tasker_pg
     restart: always
     environment:
-      - POSTGRES_DB: tasker_db
-      - POSTGRES_USER: josue
-      - POSTGRES_PASSWORD: admin
+      POSTGRES_DB: tasker_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432
