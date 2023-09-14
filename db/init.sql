@@ -1,3 +1,3 @@
--- CREATE DATABASE IF NOT EXISTS tasker_db
-SELECT 'CREATE DATABASE tasker_db'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'tasker_db')\gexec
+-- CREATE DATABASE IF NOT EXISTS taskerdb
+SELECT 'CREATE DATABASE taskerdb'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'taskerdb')\gexec
