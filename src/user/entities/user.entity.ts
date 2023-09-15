@@ -28,6 +28,7 @@ export class UserEntity extends BaseEntity implements IUser {
     name: 'email',
     type: 'varchar',
     length: 255,
+    unique: true,
   })
   email: string;
 
@@ -35,6 +36,7 @@ export class UserEntity extends BaseEntity implements IUser {
     name: 'username',
     type: 'varchar',
     length: 255,
+    unique: true,
   })
   username: string;
 
