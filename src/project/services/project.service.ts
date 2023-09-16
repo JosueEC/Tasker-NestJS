@@ -30,7 +30,17 @@ export class ProjectService {
 
   public async findOneById(id: string): Promise<ProjectEntity> {
     try {
-      const projectExists = await this.projectRepository.findOneBy({ id });
+      // Aqui basicamente se realiza la misma consulta que en la
+      // funcion de user.service, pero esta es de la otra punta
+      // de la relacion, donde ahora devolvemos los proyectos
+      // con los datos de la relacion con usuarios y la info
+      // de estos usuarios
+      const projectExists = await this.projectRepository
+        .createQueryBuilder('project')
+        .where({ id })
+        .leftJoinAndSelect('project.usersIncludes', 'usersIncludes')
+        .leftJoinAndSelect('usersIncludes.user', 'user')
+        .getOne();
 
       if (!projectExists) {
         throw new ErrorManager({
