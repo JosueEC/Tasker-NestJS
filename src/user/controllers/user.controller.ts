@@ -11,6 +11,7 @@ import { UserService } from '../services/user.service';
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserEntity } from '../entities/user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { UserProjectDto } from '../dto/user-project.dto';
 
 @Controller('/v1/user')
 export class UserController {
@@ -24,6 +25,11 @@ export class UserController {
   @Get()
   public async getAllUsers(): Promise<UserEntity[]> {
     return await this.userService.findAll();
+  }
+
+  @Post('add-to-project')
+  public async addToProject(@Body() body: UserProjectDto) {
+    return await this.userService.relationToProject(body);
   }
 
   @Get(':id')

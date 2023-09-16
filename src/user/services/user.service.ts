@@ -4,12 +4,16 @@ import { UserEntity } from '../entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { UpdateUserDto, CreateUserDto } from '../dto';
 import { ErrorManager } from 'src/utils/error.manager';
+import { UsersProjectsEntity } from '../entities/usersProjects.entity';
+import { UserProjectDto } from '../dto/user-project.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UsersProjectsEntity)
+    private readonly userProjectRepository: Repository<UsersProjectsEntity>,
   ) {}
 
   public async create(body: CreateUserDto): Promise<UserEntity> {
@@ -68,6 +72,16 @@ export class UserService {
       const response: UserEntity = await this.userRepository
         .createQueryBuilder('user')
         .where({ id })
+        // Esta instruccion recibe la columna que tiene la relacion
+        // y que objeto se desea de esa columna. Basicamente, esta
+        // condicion agrega a la consulta los proyectos con los que
+        // esta relacionado el user.
+        // NOTA: esto solo devolvera la info de la tabla intermedia
+        .leftJoinAndSelect('user.projectsIncludes', 'projectsIncludes')
+        // Con esta segunda instruccion conectamos con la segunda tabla
+        // de forma que en la misma consulta devolvemos tambien la
+        // informacion del proyecto relacionado
+        .leftJoinAndSelect('projectsIncludes.project', 'project')
         .getOne();
 
       if (!response) {
@@ -113,6 +127,16 @@ export class UserService {
       }
 
       return result;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+
+  public async relationToProject(
+    body: UserProjectDto,
+  ): Promise<UsersProjectsEntity> {
+    try {
+      return await this.userProjectRepository.save(body);
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
