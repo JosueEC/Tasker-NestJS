@@ -10,8 +10,11 @@ export class CreateUserDto implements IUser {
   firstName: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   lastName: string;
+
+  @IsNotEmpty()
+  @IsNumber()
   age: number;
 
   @IsNotEmpty()
