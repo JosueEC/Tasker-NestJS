@@ -12,7 +12,7 @@ export class UsersProjectsEntity extends BaseEntity {
     enum: ACCESS_LEVEL,
     default: ACCESS_LEVEL.MANTEINER,
   })
-  accesLevel: ACCESS_LEVEL;
+  accessLevel: ACCESS_LEVEL;
 
   @ManyToOne(() => UserEntity, (user) => user.projectsIncludes)
   user: UserEntity;
