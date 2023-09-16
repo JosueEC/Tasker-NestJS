@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { UpdateUserDto, CreateUserDto } from '../dto';
+import { ErrorManager } from 'src/utils/error.manager';
 
 @Injectable()
 export class UserService {
@@ -13,17 +14,48 @@ export class UserService {
 
   public async create(body: CreateUserDto): Promise<UserEntity> {
     try {
+      const userExists = await this.userRepository.findOneBy({
+        email: body.email,
+      });
+
+      if (userExists) {
+        throw new ErrorManager({
+          type: 'CONFLICT',
+          message: `The email ${userExists.email} already exists`,
+        });
+      }
+
       return await this.userRepository.save(body);
     } catch (error) {
-      throw new Error(error);
+      throw new ErrorManager.createSignatureError(error.message);
     }
   }
 
   public async findAll(): Promise<UserEntity[]> {
     try {
-      return await this.userRepository.find();
+      const response: UserEntity[] = await this.userRepository.find();
+
+      // Un posible manejo de error, es cuando no encontramos ningun resultado
+      // a alguna peticion
+      if (response.length === 0) {
+        // Si es el caso, lanzamos una nueva instancia de nuestra clase
+        // ErrorManager, la cual recibe el type y el message
+        //* NOTA: Dado que agregamos tipado al type, podemos acceder a la lista
+        //* de excepciones presionando 'ctrl + space'
+        throw new ErrorManager({
+          type: 'BAD_REQUEST',
+          message: 'Users not found',
+        });
+      }
+
+      return response;
     } catch (error) {
-      throw new Error(error);
+      // Esta instancia es capturada en la sentencia catch, y aqui es donde
+      // invocamos al metodo createSignatureError, el cual es el que lanza
+      // la exception como respuesta al cliente.
+      // La instancia de la clase en si solo pasa el message al constructor
+      // de la clase Error, de la cual estamos heredando en el ErrorManager
+      throw new ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -33,12 +65,21 @@ export class UserService {
   // e implica la devolucion de grandes cantidades de datos
   public async findById(id: string): Promise<UserEntity> {
     try {
-      return await this.userRepository
+      const response: UserEntity = await this.userRepository
         .createQueryBuilder('user')
         .where({ id })
         .getOne();
+
+      if (!response) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: 'User not found :(',
+        });
+      }
+
+      return response;
     } catch (error) {
-      throw new Error(error);
+      throw new ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -49,12 +90,15 @@ export class UserService {
     try {
       const result: UpdateResult = await this.userRepository.update(id, body);
       if (result.affected === 0) {
-        return undefined;
+        throw new ErrorManager({
+          type: 'NOT_MODIFIED',
+          message: 'Something went wrong!',
+        });
       }
 
       return result;
     } catch (error) {
-      throw new Error(error);
+      throw new ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -62,12 +106,15 @@ export class UserService {
     try {
       const result: DeleteResult = await this.userRepository.delete(id);
       if (result.affected === 0) {
-        return undefined;
+        throw new ErrorManager({
+          type: 'NOT_MODIFIED',
+          message: 'Something went wrong!',
+        });
       }
 
       return result;
     } catch (error) {
-      throw new Error(error);
+      throw new ErrorManager.createSignatureError(error.message);
     }
   }
 }
