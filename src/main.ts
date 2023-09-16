@@ -19,12 +19,6 @@ async function bootstrap() {
     }),
   );
 
-  // Aqui obtenemos los datos de las variables de entorno que
-  // estan en el ConfigService, de esta forma obtenemos el
-  // puerto desde el archivo .env
-  const configService = app.get(ConfigService);
-  await app.listen(configService.get('PORT'));
-
   // Aqui pasamoas la configuracion de CORS, la mayoria de estas
   // configuraciones estan en la carpeta config
   app.enableCors(CORS);
@@ -36,6 +30,12 @@ async function bootstrap() {
   // Una buena practica es establecer la palabra 'api' como sufijo
   // global de todos los endpoints del servidor
   app.setGlobalPrefix('api');
+
+  // Aqui obtenemos los datos de las variables de entorno que
+  // estan en el ConfigService, de esta forma obtenemos el
+  // puerto desde el archivo .env
+  const configService = app.get(ConfigService);
+  await app.listen(configService.get('PORT'));
 
   // Por ultimo, notificamos que el servicio se esta ejecutando
   // y en que url/puerto esta a la escucha de peticiones
