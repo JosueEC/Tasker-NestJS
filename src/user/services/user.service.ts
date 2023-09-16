@@ -27,7 +27,7 @@ export class UserService {
 
       return await this.userRepository.save(body);
     } catch (error) {
-      throw new ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -55,7 +55,7 @@ export class UserService {
       // la exception como respuesta al cliente.
       // La instancia de la clase en si solo pasa el message al constructor
       // de la clase Error, de la cual estamos heredando en el ErrorManager
-      throw new ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -79,7 +79,7 @@ export class UserService {
 
       return response;
     } catch (error) {
-      throw new ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -98,7 +98,7 @@ export class UserService {
 
       return result;
     } catch (error) {
-      throw new ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
@@ -114,7 +114,7 @@ export class UserService {
 
       return result;
     } catch (error) {
-      throw new ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 }
