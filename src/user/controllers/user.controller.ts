@@ -6,6 +6,8 @@ import {
   Post,
   Patch,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto, UpdateUserDto } from '../dto';
@@ -14,6 +16,12 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { UserProjectDto } from '../dto/user-project.dto';
 
 @Controller('/v1/user')
+// Este decorador nos permite hacer uso de los interceptors de NestJS.
+// En esta caso estamos usando el decorador @Exclude en UserEntity para
+// excluir el campo password en la respuestas devueltas al servidor
+// Esta instruccion se puede colocar de forma general en todo el controller
+// o especificamente en cada ruta donde se desee aplicar
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
