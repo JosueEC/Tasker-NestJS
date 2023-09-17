@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { UpdateUserDto, CreateUserDto } from '../dto';
 import { ErrorManager } from 'src/utils/error.manager';
 import { UsersProjectsEntity } from '../entities/usersProjects.entity';
@@ -28,6 +29,8 @@ export class UserService {
           message: `The email ${userExists.email} already exists`,
         });
       }
+
+      body.password = await bcrypt.hash(body.password, +process.env.HASH_SALT);
 
       return await this.userRepository.save(body);
     } catch (error) {
