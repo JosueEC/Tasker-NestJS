@@ -144,4 +144,46 @@ export class UserService {
       throw ErrorManager.createSignatureError(error.message);
     }
   }
+
+  // Este metodo nos va a permitir buscar un usuario en base a
+  // cualquier propiedad que se envie por parametro
+  // El metodo recibe un objeto el cual contendra una key y un value
+  public async findBy({
+    key,
+    value,
+  }: {
+    // Esta key es tipada con las propiedades de la entidad CreateUserDto
+    // lo cual se logra con la instruccion keyof, que nos devuelve la
+    // lista de claves de la entidad
+    // El value se tipa con any, ya que este puede tomar cualquier tipo
+    // de dato
+    key: keyof CreateUserDto;
+    value: any;
+  }) {
+    try {
+      const userExists: UserEntity = await this.userRepository
+        .createQueryBuilder('user')
+        // Esta instruccion permite añadir la informacion de una columna
+        // a la query, esto en caso que que no venga en la consulta simple
+        // y querramos agregarla
+        .addSelect('user.password')
+        // A traves de bracket notation es como volvemos dinamica la query
+        // ya que la key puede tomar cualquier nombre de las propiedades
+        // de CreateUserDto, de esta forma podriamos buscar un usuario
+        // por firstName, lastName, age, email, username, etc
+        .where({ [key]: value })
+        .getOne();
+
+      if (!userExists) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: 'User not found :(',
+        });
+      }
+
+      return userExists;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
 }
