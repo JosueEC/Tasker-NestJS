@@ -1,7 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
-import { UserService } from 'src/user/services/user.service';
 import { UserModule } from 'src/user/user.module';
 
 @Global()
@@ -11,9 +10,12 @@ import { UserModule } from 'src/user/user.module';
 // la aplicacion. Esto es util cuando hay alguna servicio que
 // recurrentemente va a ser usado en otros modulos
 @Module({
+  // Para hacer uso de alguno de los scripts de otro modulo
+  // debemos importar dicho modulo en el arreglo de imports
+  // del modulo separado en el que deseamos usar los servicios
   imports: [UserModule],
   controllers: [AuthController],
-  providers: [AuthService, UserService],
+  providers: [AuthService],
   exports: [],
 })
 export class AuthModule {}

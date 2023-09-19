@@ -9,6 +9,8 @@ import { UsersProjectsEntity } from './entities/usersProjects.entity';
   imports: [TypeOrmModule.forFeature([UserEntity, UsersProjectsEntity])],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserModule],
+  exports: [UserService],
+  // Para que un modulo externo a otro pueda usar los servicios de este
+  // modulo, debemos agregar el archivo al arrgelo de exports
 })
 export class UserModule {}
