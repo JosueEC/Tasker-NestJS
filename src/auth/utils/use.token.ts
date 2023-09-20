@@ -30,8 +30,8 @@ export const useToken = (token: string): IUseToken | string => {
       sub: decode.sub,
       role: decode.role,
       // Pero el dato 'isExpired' sera un valor calculado, el cual
-      // devolvera true si el token no ha expirado y false si este
-      // ya expiro
+      // devolvera true si el token ha expirado y false si este
+      // aun no expiro
       // La razon de colocar el '/1000' es porque el metodo new Date
       // agregar digitos extra a la fecha, por ende con esta division
       // eliminamos esos digitos extra
