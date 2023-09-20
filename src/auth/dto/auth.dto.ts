@@ -1,16 +1,16 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
-import { IProject } from '../interfaces/project.interface';
+import { AuthBody } from '../interfaces/auth-body.interface';
 
-export class CreateProjectDto implements IProject {
+export class AuthDto implements AuthBody {
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(255)
-  name: string;
+  username: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(255)
-  description: string;
+  password: string;
 }

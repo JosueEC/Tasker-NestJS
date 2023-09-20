@@ -1,6 +1,6 @@
 import { IsOptional, IsString, IsNumber, IsEnum } from 'class-validator';
 import { ROLE } from 'src/constants/roles';
-import { IUser } from 'src/interfaces/user.interface';
+import { IUser } from '../interfaces/user.interface';
 
 export class UpdateUserDto implements IUser {
   @IsOptional()

@@ -5,9 +5,9 @@ import {
   Body,
   Post,
 } from '@nestjs/common';
-import { AuthBody } from '../interfaces/auth-body.interface';
 import { AuthService } from '../services/auth.service';
 import { ErrorManager } from 'src/utils/error.manager';
+import { AuthDto } from '../dto/auth.dto';
 
 @Controller('v1/auth')
 export class AuthController {
@@ -17,7 +17,7 @@ export class AuthController {
   // usuario y devolver la informacion del mismo junto con su token
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
-  public async login(@Body() { username, password }: AuthBody) {
+  public async login(@Body() { username, password }: AuthDto) {
     // A traves de la funcion validateUser enviamos las credenciales
     // la funcion busca y valida las credenciales y devuelve la
     // info del usuario una vez que ha sido validado

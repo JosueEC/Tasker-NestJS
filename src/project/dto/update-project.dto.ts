@@ -1,5 +1,5 @@
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { IProject } from 'src/interfaces';
+import { IProject } from '../interfaces/project.interface';
 
 export class UpdateProjectDto implements IProject {
   @IsOptional()
