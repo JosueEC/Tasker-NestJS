@@ -1,4 +1,10 @@
-import { Controller, Body, Post } from '@nestjs/common';
+import {
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Controller,
+  Body,
+  Post,
+} from '@nestjs/common';
 import { AuthBody } from '../interfaces/auth-body.interface';
 import { AuthService } from '../services/auth.service';
 import { ErrorManager } from 'src/utils/error.manager';
@@ -10,6 +16,7 @@ export class AuthController {
   // El metodo login es el que va a validar las credenciales del
   // usuario y devolver la informacion del mismo junto con su token
   @Post()
+  @UseInterceptors(ClassSerializerInterceptor)
   public async login(@Body() { username, password }: AuthBody) {
     // A traves de la funcion validateUser enviamos las credenciales
     // la funcion busca y valida las credenciales y devuelve la
