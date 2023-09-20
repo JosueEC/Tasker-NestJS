@@ -161,7 +161,7 @@ export class UserService {
     value: any;
   }) {
     try {
-      const userExists: UserEntity = await this.userRepository
+      const userFound: UserEntity = await this.userRepository
         .createQueryBuilder('user')
         // Esta instruccion permite añadir la informacion de una columna
         // a la query, esto en caso que que no venga en la consulta simple
@@ -174,14 +174,7 @@ export class UserService {
         .where({ [key]: value })
         .getOne();
 
-      if (!userExists) {
-        throw new ErrorManager({
-          type: 'NOT_FOUND',
-          message: 'User not found :(',
-        });
-      }
-
-      return userExists;
+      return userFound;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
