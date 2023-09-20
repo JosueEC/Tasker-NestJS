@@ -8,12 +8,15 @@ import {
   Delete,
   UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserEntity } from '../entities/user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UserProjectDto } from '../dto/user-project.dto';
+import { PublicAccess } from 'src/auth/decorators/public-access.decorator';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('/v1/user')
 // Este decorador nos permite hacer uso de los interceptors de NestJS.
@@ -22,6 +25,14 @@ import { UserProjectDto } from '../dto/user-project.dto';
 // Esta instruccion se puede colocar de forma general en todo el controller
 // o especificamente en cada ruta donde se desee aplicar
 @UseInterceptors(ClassSerializerInterceptor)
+// Este decorador es el que nos permite usar los guards que hemos
+// creado, en este caso es para el guard que da acceso a las rutas
+// en base al token del usuario
+// Nota: Loa guards se puden colocar a nivel global, de controlador y de
+// ruta, dependiendo de donde querramos que sean usados
+// NOTA 2: Al parecer los guards funcionan sin necesidad de exportarlos e
+// importarlos en los modulos
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -40,6 +51,10 @@ export class UserController {
     return await this.userService.relationToProject(body);
   }
 
+  // Este es el decorador que creamos para establecer que esta ruta
+  // sera de acceso publico, trabaja en conjunto con el decorador
+  // @UseGuards que esta al principio de la clase
+  @PublicAccess()
   @Get(':id')
   public async getOneUser(@Param('id') id: string): Promise<UserEntity> {
     return await this.userService.findById(id);
