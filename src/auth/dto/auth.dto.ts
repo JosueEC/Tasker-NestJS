@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
-import { AuthBody } from '../interfaces/auth-body.interface';
+import { AuthBody } from '../interfaces';
 
 export class AuthDto implements AuthBody {
   @IsNotEmpty()

@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
 import { ErrorManager } from 'src/utils/error.manager';
-import { PayloadToken } from '../interfaces/payload-token.interface';
+import { PayloadToken } from '../interfaces';
 
 @Injectable()
 export class AuthService {
