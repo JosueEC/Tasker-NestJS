@@ -9,6 +9,9 @@ async function bootstrap() {
   // Esta funcion es la que inicializa toda la aplicacion
   const app = await NestFactory.create(AppModule);
 
+  // Esta instruccion es para que podamos usar los guards
+  // de manera global
+  //* app.useGlobalGuards();
   // Esta es para que podamos usar los class-validators en
   // nuestros DTO's y las validaciones sean ejecutadas
   app.useGlobalPipes(
