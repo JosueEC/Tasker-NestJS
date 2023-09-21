@@ -75,6 +75,15 @@ export class RoleGuard implements CanActivate {
         }
       }
 
+      // Esta instruccion se encarga de que, si el rol enviado es el
+      // de ADMIN, que directamente lo deje pasar. Esto es necesario
+      // debido a que si usamos el decorador @Roles('BASIC') aunque
+      // la peticion venga de un ADMIN este no lo deja pasar, con esta
+      // condicion arreglamos eso
+      if (roleUser === ROLE.ADMIN) {
+        return true;
+      }
+
       // El flujo anterior de comprobacioes fue para identificar si se
       // encontro el decorador @Admin en lugar del decorador @Roles, lo
       // siguiente es ahora para el decorador @Roles
