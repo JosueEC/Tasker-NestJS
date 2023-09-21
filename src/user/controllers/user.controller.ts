@@ -17,6 +17,8 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { UserProjectDto } from '../dto/user-project.dto';
 import { PublicAccess } from 'src/auth/decorators/public-access.decorator';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RoleGuard } from 'src/auth/guards/role.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('/v1/user')
 // Este decorador nos permite hacer uso de los interceptors de NestJS.
@@ -32,7 +34,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 // ruta, dependiendo de donde querramos que sean usados
 // NOTA 2: Al parecer los guards funcionan sin necesidad de exportarlos e
 // importarlos en los modulos
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RoleGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -41,6 +43,7 @@ export class UserController {
     return this.userService.create(body);
   }
 
+  @Roles('ADMIN')
   @Get()
   public async getAllUsers(): Promise<UserEntity[]> {
     return await this.userService.findAll();
