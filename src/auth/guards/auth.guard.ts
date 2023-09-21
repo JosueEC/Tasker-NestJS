@@ -41,8 +41,6 @@ export class AuthGuard implements CanActivate {
         return true;
       }
 
-      // Caso contrario vamos a manejar el rol del usuario para dar
-      // o denegar accesos a rutas
       // Nuevamente, haciendo uso del context y con su metodo switchToHttp
       // podemos acceder a los datos de la request, response y next.
       // Nota: El dato generico debe ser importado de la libreria que se
@@ -52,8 +50,10 @@ export class AuthGuard implements CanActivate {
       // Obtenemos el token desde el header de la request
       const token = req.headers['user_token'];
 
-      // verificamos si el token no existe/ no viene o si viene como un
-      // array, en ese caso lanzamos la excepcion de no autorizado
+      // verificamos si el token no existe/no viene o si viene como un
+      // array, en ese caso lanzamos la excepcion de no autorizado, ya que
+      // el token es requerido para obtener la informacion del usuario y
+      // poder dar accesos o restricciones
       if (!token || Array.isArray(token)) {
         throw new ErrorManager({
           type: 'UNAUTHORIZED',
@@ -62,8 +62,9 @@ export class AuthGuard implements CanActivate {
       }
 
       // caso contrario donde si existe el token/si viene, se lo
-      // pasamos a nuestra funcion que decodea el token y verifica
-      // su fecha de expiracion
+      // pasamos a nuestra funcion que decodea el token y obtiene los
+      // datos encodeados del usuario, asi como verificar que el token
+      // no este expirado
       const manageToken: IUseToken | string = useToken(token);
 
       // Ya que el resultado de la funcion tiene que ser un objeto
@@ -79,8 +80,9 @@ export class AuthGuard implements CanActivate {
       }
 
       // La siguiente validacion es para verificar la expiracion
-      // del token, donde si es el caso de que ya expirto, nuevamente
-      // lanzamos la excepcion para notificar al usuario
+      // del token, donde si es el caso de que ya expiro, nuevamente
+      // lanzamos la excepcion para notificar al usuario, donde tendra
+      // que logearse de nuevo para generar un nuevo token
       if (manageToken.isExpired) {
         throw new ErrorManager({
           type: 'UNAUTHORIZED',
@@ -91,11 +93,14 @@ export class AuthGuard implements CanActivate {
       // La ultima comprobacion es verificar que el usuario que envio
       // el token si existe, para eso usamos el userService y buscamos
       // la info del user
+      // El id del usuario no guardamos en el token a traves de la clave
+      // sub
       const { sub } = manageToken;
       const user = await this.userService.findById(sub);
 
       // En el caso en el que no se encontro, significa que es un token
-      // invalido, por lo que lanzamos la excepcion para notificar
+      // invalido ya que el usuario que lo envio, no existe en la BD
+      // por lo que lanzamos la excepcion para notificar al cliente
       if (!user) {
         throw new ErrorManager({
           type: 'UNAUTHORIZED',
@@ -103,11 +108,20 @@ export class AuthGuard implements CanActivate {
         });
       }
 
+      // Pasadas todas las comprobaciones significa que tenemos los datos
+      // correctos y necesarios. Ahora injectamos el id y el rol del usuario
+      // encontrado en la request de la peticion.
+      // Esto se hace porque estos datos seran utiles para el guard que revisa
+      // el rol del usuario y el nivel de acceso de las rutas
+      // NOTA: Estas propiedades se pueden inyectar gracias al namespace creado
+      // en express/index.d.ts con la interface Request
       req.idUser = user.id;
       req.roleUser = user.role;
 
       // Caso contrario todas las validaciones fueron aprobadas, osea,
-      // el token es valido, no esta expirado y el usuario existe
+      // el token es valido, no esta expirado y el usuario existe, por ende
+      // devolvemos un true, lo que se traduce en que el guard deja avanzar
+      // la peticion al siguiente Guard, Pipe, o Controller ...
       return true;
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
