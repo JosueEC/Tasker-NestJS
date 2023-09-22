@@ -80,7 +80,7 @@ export class RoleGuard implements CanActivate {
       // debido a que si usamos el decorador @Roles('BASIC') aunque
       // la peticion venga de un ADMIN este no lo deja pasar, con esta
       // condicion arreglamos eso
-      if (roleUser === ROLE.ADMIN) {
+      if (roleUser === ROLE.ADMIN || roleUser === ROLE.CREATOR) {
         return true;
       }
 
