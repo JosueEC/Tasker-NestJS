@@ -38,6 +38,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @PublicAccess()
   @Post()
   public async createUser(@Body() body: CreateUserDto): Promise<UserEntity> {
     return this.userService.create(body);
