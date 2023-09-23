@@ -8,10 +8,14 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    // Esta parte es para que la aplicacion tenga conocimiento
+    // y acceso de las variables de entorno
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
       isGlobal: true,
     }),
+    // Pasamos la configuracion de la DB creada en la constante
+    // DataSourceConfig de la carpeta config
     TypeOrmModule.forRoot(DataSourceConfig),
     UserModule,
     ProjectModule,
